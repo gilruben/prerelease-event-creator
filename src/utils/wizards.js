@@ -108,8 +108,7 @@ const getPrereleaseEvents = async (orgIds) => {
       console.log(`ERR: ${err.message}`)
     });
 
-  const events = prereleaseData?.data?.searchEvents?.events
-  console.log(events)
+  return prereleaseData?.data?.searchEvents?.events
 }
 
 module.exports = {
