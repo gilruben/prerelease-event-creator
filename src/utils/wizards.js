@@ -105,7 +105,7 @@ const getPrereleaseEvents = async (orgIds) => {
     )
     .then((res) => res.data)
     .catch((err) => {
-      console.log(`ERR: ${err.message}`)
+      console.error(`ERROR: ${err.message}`)
     });
 
   return prereleaseData?.data?.searchEvents?.events

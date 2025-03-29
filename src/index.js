@@ -2,7 +2,7 @@ require('dotenv').config();
 const Discord = require('discord.js');
 const { storeIds } = require('./storeIds');
 const { getPrereleaseEvents } = require('./utils/wizards');
-const { createEvent } = require('./utils/discord');
+const { processPrereleaseEvents } = require('./utils/helpers');
 
 const { GatewayIntentBits } = Discord;
 const client = new Discord.Client({ intents: [GatewayIntentBits.Guilds] });
@@ -10,9 +10,9 @@ const client = new Discord.Client({ intents: [GatewayIntentBits.Guilds] });
 client.on('ready', async () => {
   console.log(`Logged in as ${client.user.tag}!`);
 
-  const prereleaseData = await getPrereleaseEvents(storeIds);
+  const prereleaseEvents = await getPrereleaseEvents(storeIds);
 
-  createEvent(client, prereleaseData[0]);
+  await processPrereleaseEvents(client, prereleaseEvents);
 });
 
 client.login(process.env.CLIENT_TOKEN); //signs the bot in with token

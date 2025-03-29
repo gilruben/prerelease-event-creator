@@ -21,3 +21,8 @@ yarn-error.log*
 # local env files
 .env
 .env*.local
+
+# local storage
+/persist
+
+/src/storeIds.js

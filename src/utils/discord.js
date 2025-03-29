@@ -23,7 +23,7 @@ const createEvent = async (client, prereleaseEventData) => {
   ];
   const eventDescription = eventDescriptionLines.join('\n\n');
 
-  await event_manager.create({
+  return event_manager.create({
       name: 'Test Event',
       scheduledStartTime: startTimeInSeconds,
       scheduledEndTime: endTimeInSeconds,
