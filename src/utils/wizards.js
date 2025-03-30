@@ -111,6 +111,12 @@ const getPrereleaseEvents = async (orgIds) => {
   return prereleaseData?.data?.searchEvents?.events
 }
 
+const getWizardsEventUrl = (wizardEventId) => {
+  if (!wizardEventId) throw new Error('An ID for the wizards event must be supplied ');
+  return`https://locator.wizards.com/events/${wizardEventId}`;
+};
+
 module.exports = {
-  getPrereleaseEvents
+  getPrereleaseEvents,
+  getWizardsEventUrl
 };

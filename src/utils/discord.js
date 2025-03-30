@@ -1,5 +1,6 @@
 const Discord = require('discord.js');
 const { GuildScheduledEventManager, GuildScheduledEventPrivacyLevel, GuildScheduledEventEntityType } = Discord;
+const { getWizardsEventUrl } = require('./wizards');
 
 const createEvent = async (client, prereleaseEventData) => {
   const guildId = process.env.GUILD_ID;
@@ -19,7 +20,7 @@ const createEvent = async (client, prereleaseEventData) => {
   const eventDescriptionLines = [
     prereleaseEventData.description,
     `Entry: $${prereleaseEventData.entryFee.amount / 100}`,
-    `Event Details: https://locator.wizards.com/events/${prereleaseEventData.id}`
+    `Event Details: ${getWizardsEventUrl(prereleaseEventData.id)}`
   ];
   const eventDescription = eventDescriptionLines.join('\n\n');
 

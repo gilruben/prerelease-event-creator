@@ -1,16 +1,39 @@
 const Storage = require('./storage')
 const { createEvent } = require('./discord');
+const { getWizardsEventUrl } = require('./wizards');
+
+const link = (text, url) => `\x1b]8;;${url}\x1b\\${text}\x1b]8;;\x1b\\`;
 
 const processPrereleaseEvents = async (client, prereleaseEvents) => {
-  for (let indx = 0; indx < prereleaseEvents.length; indx += 1) {
-    const prereleaseEvent = prereleaseEvents[indx];
+  const groupedByCardSet = Object.groupBy(prereleaseEvents, prereleaseEvent => prereleaseEvent.cardSet.id);
+  const groupByFirstPrereleaseEventOfCardSet = Object.values(groupedByCardSet).sort((set1,set2) => {
+    return (new Date(set1[0].scheduledStartTime)) - (new Date(set2[0].scheduledStartTime))
+  });
+
+  // This will grab all the prelease events of a set if the first prerelease event for that set is within a month
+  const prereleasesWithinAMonth = groupByFirstPrereleaseEventOfCardSet.filter((setPrereleases) => {
+    const oneMonthInMilliseconds = 30 * 24 * 60 * 60 * 1000;
+    const oneMonthFromNow = (new Date()).getTime() + oneMonthInMilliseconds;
+
+    const prereleaseStartTimeInMilliseconds = (new Date(setPrereleases[0].scheduledStartTime)).getTime();
+
+    return prereleaseStartTimeInMilliseconds <= oneMonthFromNow
+  }).flat();
+
+  for (let indx = 0; indx < prereleasesWithinAMonth.length; indx += 1) {
+    const prereleaseEvent = prereleasesWithinAMonth[indx];
 
     // If the prerelease event ID is already in the storage, then a
     // discord event has already been created for it
     const itemInStorage = await Storage.getItem(prereleaseEvent.id);
     if (!itemInStorage) {
       const discordEvent = await createEvent(client, prereleaseEvent);
-      await Storage.setItem(prereleaseEvent.id, discordEvent.id)
+
+      const prereleaseUrl = getWizardsEventUrl(prereleaseEvent.id);
+      const prereleaseLink = link(prereleaseUrl, prereleaseUrl);
+      console.log(`Discord Event ${discordEvent.id} created for prerelease ${prereleaseLink}`);
+
+      await Storage.setItem(prereleaseEvent.id, discordEvent.id);
     }
   }
 };
