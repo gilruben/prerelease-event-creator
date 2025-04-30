@@ -7,7 +7,7 @@ const createEvent = async (client, prereleaseEventData) => {
   const guild = client.guilds.cache.get(guildId);
 
   if (!guild)
-    return console.log('Guild not found');
+    throw new Error('Guild not found');
 
   const event_manager = new GuildScheduledEventManager(guild);
 
@@ -40,6 +40,17 @@ const createEvent = async (client, prereleaseEventData) => {
   });
 };
 
+const isGuildValid = (client) => {
+  const guildId = process.env.GUILD_ID;
+  const guild = client.guilds.cache.get(guildId);
+
+  if (!guild)
+    return false;
+
+  return true;
+}
+
 module.exports = {
-  createEvent
+  createEvent,
+  isGuildValid
 }
