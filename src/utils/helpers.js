@@ -1,24 +1,37 @@
-const Storage = require('./storage')
-const { createEvent } = require('./discord');
-const { getWizardsEventUrl } = require('./wizards');
+const Storage = require("./storage");
+const { createEvent } = require("./discord");
+const { getWizardsEventUrl } = require("./wizards");
 
 const link = (text, url) => `\x1b]8;;${url}\x1b\\${text}\x1b]8;;\x1b\\`;
 
 const processPrereleaseEvents = async (client, prereleaseEvents) => {
-  const groupedByCardSet = Object.groupBy(prereleaseEvents, prereleaseEvent => prereleaseEvent.cardSet.id);
-  const groupByFirstPrereleaseEventOfCardSet = Object.values(groupedByCardSet).sort((set1,set2) => {
-    return (new Date(set1[0].scheduledStartTime)) - (new Date(set2[0].scheduledStartTime))
+  const groupedByCardSet = Object.groupBy(
+    prereleaseEvents,
+    (prereleaseEvent) => prereleaseEvent.cardSet.id,
+  );
+
+  const groupByFirstPrereleaseEventOfCardSet = Object.values(
+    groupedByCardSet,
+  ).sort((set1, set2) => {
+    return (
+      new Date(set1[0].scheduledStartTime) -
+      new Date(set2[0].scheduledStartTime)
+    );
   });
 
   // This will grab all the prelease events of a set if the first prerelease event for that set is within a month
-  const prereleasesWithinAMonth = groupByFirstPrereleaseEventOfCardSet.filter((setPrereleases) => {
-    const oneMonthInMilliseconds = 30 * 24 * 60 * 60 * 1000;
-    const oneMonthFromNow = (new Date()).getTime() + oneMonthInMilliseconds;
+  const prereleasesWithinAMonth = groupByFirstPrereleaseEventOfCardSet
+    .filter((setPrereleases) => {
+      const oneMonthInMilliseconds = 30 * 24 * 60 * 60 * 1000;
+      const oneMonthFromNow = new Date().getTime() + oneMonthInMilliseconds;
 
-    const prereleaseStartTimeInMilliseconds = (new Date(setPrereleases[0].scheduledStartTime)).getTime();
+      const prereleaseStartTimeInMilliseconds = new Date(
+        setPrereleases[0].scheduledStartTime,
+      ).getTime();
 
-    return prereleaseStartTimeInMilliseconds <= oneMonthFromNow
-  }).flat();
+      return prereleaseStartTimeInMilliseconds <= oneMonthFromNow;
+    })
+    .flat();
 
   for (let indx = 0; indx < prereleasesWithinAMonth.length; indx += 1) {
     const prereleaseEvent = prereleasesWithinAMonth[indx];
@@ -31,7 +44,9 @@ const processPrereleaseEvents = async (client, prereleaseEvents) => {
 
       const prereleaseUrl = getWizardsEventUrl(prereleaseEvent.id);
       const prereleaseLink = link(prereleaseUrl, prereleaseUrl);
-      console.log(`Discord Event ${discordEvent.id} created for prerelease ${prereleaseLink}`);
+      console.log(
+        `Discord Event ${discordEvent.id} created for prerelease ${prereleaseLink}`,
+      );
 
       await Storage.setItem(prereleaseEvent.id, discordEvent.id);
     }
@@ -39,5 +54,5 @@ const processPrereleaseEvents = async (client, prereleaseEvents) => {
 };
 
 module.exports = {
-  processPrereleaseEvents
+  processPrereleaseEvents,
 };

@@ -1,4 +1,4 @@
-const axios = require('axios');
+const axios = require("axios");
 
 const getPrereleaseEventsPayload = (orgIds) => ({
   query: `query queryEvents(
@@ -82,41 +82,39 @@ const getPrereleaseEventsPayload = (orgIds) => ({
     }
   }`,
   variables: {
-    "latitude": 40.7245678,
-    "longitude": -73.8457658,
-    "maxMeters": 16093,
-    "tags": [
-      "magic:_the_gathering",
-      "magic_prerelease"
-    ],
-    "sort": "distance",
-    "sortDirection": "Asc",
-    "orgs": orgIds,
-    "pageSize": 10,
-    "page": 0
-  }
+    latitude: 40.7245678,
+    longitude: -73.8457658,
+    maxMeters: 16093,
+    tags: ["magic:_the_gathering", "magic_prerelease"],
+    sort: "distance",
+    sortDirection: "Asc",
+    orgs: orgIds,
+    pageSize: 10,
+    page: 0,
+  },
 });
 
 const getPrereleaseEvents = async (orgIds) => {
   const prereleaseData = await axios
     .post(
-      'https://api.tabletop.wizards.com/silverbeak-griffin-service/graphql',
-      getPrereleaseEventsPayload(orgIds)
+      "https://api.tabletop.wizards.com/silverbeak-griffin-service/graphql",
+      getPrereleaseEventsPayload(orgIds),
     )
     .then((res) => res.data)
     .catch((err) => {
-      console.error(`ERROR: ${err.message}`)
+      console.error(`ERROR: ${err.message}`);
     });
 
-  return prereleaseData?.data?.searchEvents?.events
-}
+  return prereleaseData?.data?.searchEvents?.events;
+};
 
 const getWizardsEventUrl = (wizardEventId) => {
-  if (!wizardEventId) throw new Error('An ID for the wizards event must be supplied ');
-  return`https://locator.wizards.com/events/${wizardEventId}`;
+  if (!wizardEventId)
+    throw new Error("An ID for the wizards event must be supplied ");
+  return `https://locator.wizards.com/events/${wizardEventId}`;
 };
 
 module.exports = {
   getPrereleaseEvents,
-  getWizardsEventUrl
+  getWizardsEventUrl,
 };
