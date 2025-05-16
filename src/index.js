@@ -1,4 +1,8 @@
 require("dotenv").config();
+require("console-stamp")(console, {
+  format: ":date(mm/dd/yyyy HH:MM:ss) :label",
+});
+
 const Discord = require("discord.js");
 const { storeIds } = require("./storeIds");
 const { getPrereleaseEvents } = require("./utils/wizards");
