@@ -1,7 +1,7 @@
 require("dotenv").config();
-require("console-stamp")(console, {
-  format: ":date(mm/dd/yyyy HH:MM:ss) :label",
-});
+require('console-stamp')(console, { 
+    format: ':date(mm/dd HH:MM:ss.l) :label' 
+} );
 
 const Discord = require("discord.js");
 const { storeIds } = require("./storeIds");
@@ -9,6 +9,7 @@ const { getPrereleaseEvents } = require("./utils/wizards");
 const { processPrereleaseEvents } = require("./utils/helpers");
 const { isGuildValid } = require("./utils/discord");
 const cron = require("node-cron");
+
 
 const { GatewayIntentBits } = Discord;
 const client = new Discord.Client({ intents: [GatewayIntentBits.Guilds] });

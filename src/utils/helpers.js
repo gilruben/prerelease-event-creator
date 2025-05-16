@@ -48,7 +48,12 @@ const processPrereleaseEvents = async (client, prereleaseEvents) => {
         `Discord Event ${discordEvent.id} created for prerelease ${prereleaseLink}`,
       );
 
-      await Storage.setItem(prereleaseEvent.id, discordEvent.id);
+      await Storage.setItem(prereleaseEvent.id, {
+        discordEventId: discordEvent.id,
+        title: prereleaseEvent.title,
+        scheduledStartTime: prereleaseEvent.scheduledStartTime,
+        store: prereleaseEvent?.organization?.name,
+      });
     }
   }
 };
