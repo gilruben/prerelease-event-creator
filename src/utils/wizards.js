@@ -4,15 +4,15 @@ const getPrereleaseEventsPayload = (orgIds) => ({
   query: `query queryEvents(
     $latitude: Float!
     $longitude: Float!
-    $maxMeters: maxMeters_Int_NotNull_min_1!
+    $maxMeters: Int!
     $tags: [String!]!
     $sort: EventSearchSortField
     $sortDirection: EventSearchSortDirection
     $orgs: [ID!]
     $startDate: DateTime
     $endDate: DateTime
-    $page: page_Int_min_0
-    $pageSize: pageSize_Int_min_1
+    $page: Int
+    $pageSize: Int
   ) {
     searchEvents(
       query: {
@@ -102,7 +102,7 @@ const getPrereleaseEvents = async (orgIds) => {
     )
     .then((res) => res.data)
     .catch((err) => {
-      console.error(`ERROR: ${err.message}`);
+      console.error(`WIZARDS-ERROR: ${err.message}`);
     });
 
   return prereleaseData?.data?.searchEvents?.events;
