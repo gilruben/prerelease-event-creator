@@ -83,11 +83,7 @@ const editEvent = async (client, discordScheduledEventId, data) => {
     id: discordScheduledEventId,
   });
 
-  // const fetchedEvent = await eventManager.fetch({ guildScheduledEvent: event });
-
   const editedEvent = await eventManager.edit(event, data);
-
-  console.log("EDITED-EVENT:", editedEvent);
 
   return editedEvent;
 };
