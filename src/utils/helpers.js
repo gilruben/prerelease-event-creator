@@ -54,6 +54,7 @@ const processPrereleaseEvents = async (client, prereleaseEvents) => {
 
       await Storage.setItem(prereleaseEvent.id, {
         discordEventId: discordEvent.id,
+        entryFee: prereleaseEvent?.entryFee?.amount,
         title: prereleaseEvent.title,
         scheduledStartTime: prereleaseEvent.scheduledStartTime,
         store: prereleaseEvent?.organization?.name,
