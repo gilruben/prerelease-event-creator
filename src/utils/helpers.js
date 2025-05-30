@@ -1,5 +1,9 @@
 const Storage = require("./storage");
-const { createEvent } = require("./discord");
+const {
+  createEvent,
+  editEvent,
+  getScheduledEventDescription,
+} = require("./discord");
 const { getWizardsEventUrl } = require("./wizards");
 
 const link = (text, url) => `\x1b]8;;${url}\x1b\\${text}\x1b]8;;\x1b\\`;
@@ -58,6 +62,43 @@ const processPrereleaseEvents = async (client, prereleaseEvents) => {
   }
 };
 
+const resyncDiscordEvents = async (client, prereleaseEvents) => {
+  const resyncedPrereleaseEvents = [];
+
+  for (let indx = 0; indx < prereleaseEvents.length; indx += 1) {
+    const prereleaseEvent = prereleaseEvents[indx];
+    const prereleaseEventId = prereleaseEvent.id;
+    const prereleaseEventEntryFee = prereleaseEvent?.entryFee?.amount;
+    const expectedDiscordEventDescription =
+      getScheduledEventDescription(prereleaseEvent);
+
+    const eventInStorage = await Storage.getItem(prereleaseEventId);
+
+    if (eventInStorage) {
+      const { discordEventId, entryFee: entryFeeInStorage } = eventInStorage;
+
+      const entryFeeHasChanged = entryFeeInStorage !== prereleaseEventEntryFee;
+      if (entryFeeHasChanged) {
+        await editEvent(client, discordEventId, {
+          description: expectedDiscordEventDescription,
+        });
+
+        eventInStorage.entryFee = prereleaseEventEntryFee;
+
+        await Storage.updateItem(prereleaseEventId, eventInStorage);
+
+        resyncedPrereleaseEvents.push(prereleaseEventId);
+      }
+    }
+  }
+
+  if (resyncedPrereleaseEvents.length)
+    console.log(
+      `Discord events for the following prerelease events have been updated ${resyncedPrereleaseEvents}`,
+    );
+};
+
 module.exports = {
   processPrereleaseEvents,
+  resyncDiscordEvents,
 };
