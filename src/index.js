@@ -8,28 +8,29 @@ const { storeIds } = require("./storeIds");
 const { getPrereleaseEvents } = require("./utils/wizards");
 const { processPrereleaseEvents } = require("./utils/helpers");
 const { isGuildValid } = require("./utils/discord");
-const cron = require("node-cron");
 
 const { GatewayIntentBits } = Discord;
 const client = new Discord.Client({ intents: [GatewayIntentBits.Guilds] });
 
-client.on("ready", () => {
+client.once("ready", async () => {
   console.log(`Logged in as ${client.user.tag}!`);
+  try {
+    const guildExists = isGuildValid(client);
 
-  // Checks for prerelease events every third hour (ex: 12pm, 3pm, 6pm, etc)
-  cron.schedule("0 */3 * * *", async () => {
-    try {
-      const guildExists = isGuildValid(client);
+    if (!guildExists) throw new Error("Guild not found");
 
-      if (!guildExists) throw new Error("Guild not found");
+    const prereleaseEvents = await getPrereleaseEvents(storeIds);
 
-      const prereleaseEvents = await getPrereleaseEvents(storeIds);
-
-      await processPrereleaseEvents(client, prereleaseEvents);
-    } catch (error) {
-      console.error(error.message);
-    }
-  });
+    await processPrereleaseEvents(client, prereleaseEvents);
+  } catch (error) {
+    console.error(error.stack);
+  }
 });
 
-client.login(process.env.CLIENT_TOKEN); //signs the bot in with token
+try {
+  client.login(process.env.CLIENT_TOKEN); //signs the bot in with token
+  throw new Error("test");
+} catch (error) {
+  console.error('There was an error logging onto discord');
+  console.error(error.stack);
+}

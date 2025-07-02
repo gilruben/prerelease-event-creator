@@ -15,7 +15,6 @@
     "console-stamp": "3.1.2",
     "discord.js": "14.18.0",
     "dotenv": "16.4.7",
-    "node-cron": "3.0.3",
     "node-persist": "4.0.4"
   },
   "devDependencies": {
