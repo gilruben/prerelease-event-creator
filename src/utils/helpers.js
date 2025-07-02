@@ -99,7 +99,19 @@ const resyncDiscordEvents = async (client, prereleaseEvents) => {
     );
 };
 
+const storageCleanup = async () => {
+  console.log("Cleaning up storage");
+  const keys = await Storage.keys();
+
+  for (key of keys) {
+    // Will automatically remove the item from storage if it has expired
+    const value = await Storage.getItem(key);
+  }
+  console.log("Storage cleanup complete");
+};
+
 module.exports = {
   processPrereleaseEvents,
   resyncDiscordEvents,
+  storageCleanup,
 };
